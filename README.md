@@ -68,7 +68,7 @@ flowchart TD
 
 ```bash
 docker-compose up -d
-cd backend && mvn spring-boot:run
+cd backend; mvn spring-boot:run
 cd frontend/ims-ui && npm install && npm start
 ```
 
