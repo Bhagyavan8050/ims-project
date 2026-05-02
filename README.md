@@ -12,6 +12,15 @@
 [Watch Here](https://drive.google.com/file/d/106J-sIGM9j3WxB25iyxjg3frYYfQFMl4/view)
 
 ---
+##  Non-Functional Enhancements
+- Logging implemented using SLF4J
+- Asynchronous processing using @Async
+- CORS configured
+- Exception handling added
+- Input validation added
+- Docker-based setup
+
+---
 
 ##  Overview
 
