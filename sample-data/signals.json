@@ -1,0 +1,18 @@
+[
+  {
+    "componentId": "DB_CLUSTER",
+    "message": "Database connection timeout"
+  },
+  {
+    "componentId": "DB_CLUSTER",
+    "message": "High latency detected"
+  },
+  {
+    "componentId": "CACHE_CLUSTER_01",
+    "message": "Cache miss rate high"
+  },
+  {
+    "componentId": "MCP_SERVICE",
+    "message": "Service unavailable"
+  }
+]

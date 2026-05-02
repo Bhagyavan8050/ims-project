@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    container_name: ims-postgres
+    environment:
+      POSTGRES_DB: ims
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      TZ: Asia/Kolkata
+
+    ports:
+      - "5432:5432"
+
+  mongodb:
+    image: mongo
+    container_name: ims-mongo
+    ports:
+      - "27017:27017"
