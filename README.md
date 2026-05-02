@@ -67,9 +67,19 @@ flowchart TD
 ## ️ Setup Instructions
 
 ```bash
+## 🚀 Run Project
+
+### 1. Start Docker
 docker-compose up -d
-cd backend; mvn spring-boot:run
-cd frontend/ims-ui && npm install && npm start
+
+### 2. Start Backend
+cd backend
+mvn spring-boot:run
+
+### 3. Start Frontend
+cd frontend/ims-ui
+npm install
+npm start
 ```
 
 ---
