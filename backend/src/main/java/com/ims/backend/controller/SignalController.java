@@ -2,56 +2,76 @@ package com.ims.backend.controller;
 
 import com.ims.backend.dto.SignalDTO;
 import com.ims.backend.entity.WorkItem;
-import com.ims.backend.model.Signal;
-import com.ims.backend.repository.SignalRepository;
 import com.ims.backend.repository.WorkItemRepository;
 import com.ims.backend.service.SignalQueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 public class SignalController {
+
+    private static final Logger log = LoggerFactory.getLogger(SignalController.class);
 
     @Autowired
     private SignalQueueService queueService;
 
     @Autowired
-    private SignalRepository signalRepository;
-
-    @Autowired
     private WorkItemRepository workItemRepository;
 
+    //  RECEIVE SIGNAL (ONLY SEND TO QUEUE)
     @PostMapping("/signal")
-    public String receiveSignal(@RequestBody SignalDTO signalDTO) {
+    public ResponseEntity<?> receiveSignal(@RequestBody SignalDTO signalDTO) {
 
-        queueService.addSignal(signalDTO);
+        log.info("Received signal: {}", signalDTO);
 
-        Signal s = new Signal();
-        s.setComponentId(signalDTO.getComponentId());
-        s.setMessage(signalDTO.getMessage());
-        s.setTimestamp(java.time.LocalDateTime.now());
+        if (signalDTO.getComponentId() == null || signalDTO.getComponentId().isEmpty()) {
+            return ResponseEntity.badRequest().body("ComponentId is required");
+        }
 
-        signalRepository.save(s);
+        try {
+            // ONLY queue it (worker will handle everything)
+            queueService.addSignal(signalDTO);
 
-        return "Signal queued + saved";
+            log.info("Signal added to queue for componentId={}", signalDTO.getComponentId());
+
+            return ResponseEntity.ok("Signal received and queued");
+
+        } catch (Exception ex) {
+            log.error("Error adding signal to queue", ex);
+            return ResponseEntity.internalServerError().body("Error processing signal");
+        }
     }
 
+    //  RESOLVE INCIDENT (KEEP AS IS BUT CLEANED)
     @PostMapping("/resolve/{id}")
-    public String resolveIncident(@PathVariable Long id) {
+    public ResponseEntity<?> resolveIncident(@PathVariable Long id) {
 
-        WorkItem item = workItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("WorkItem not found"));
+        log.info("Resolving incident id={}", id);
 
-        item.setStatus("RESOLVED");
-        item.setResolvedTime(System.currentTimeMillis());
+        try {
+            WorkItem item = workItemRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("WorkItem not found"));
 
-        long mttr = item.getResolvedTime() - item.getCreatedTime();
-        item.setMttr(mttr);
+            item.setStatus("RESOLVED");
+            item.setResolvedTime(System.currentTimeMillis());
 
-        workItemRepository.save(item);
+            long mttr = item.getResolvedTime() - item.getCreatedTime();
+            item.setMttr(mttr);
 
-        return "Incident resolved successfully. MTTR = " + mttr + " ms";
+            workItemRepository.save(item);
+
+            log.info("Incident resolved id={}, MTTR={} ms", id, mttr);
+
+            return ResponseEntity.ok("Resolved. MTTR = " + mttr + " ms");
+
+        } catch (Exception ex) {
+            log.error("Error resolving incident id={}", id, ex);
+            return ResponseEntity.internalServerError().body("Error resolving incident");
+        }
     }
 }

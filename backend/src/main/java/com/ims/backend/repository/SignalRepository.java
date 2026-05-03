@@ -1,9 +1,7 @@
 package com.ims.backend.repository;
 
-import com.ims.backend.model.Signal;
+import com.ims.backend.mongo.SignalLog;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface SignalRepository extends MongoRepository<Signal, String> {
-
-
+public interface SignalRepository extends MongoRepository<SignalLog, String> {
 }

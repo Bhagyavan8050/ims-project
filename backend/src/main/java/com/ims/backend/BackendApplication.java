@@ -2,9 +2,11 @@ package com.ims.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.TimeZone;
 
+@EnableAsync   //  Required for async processing
 @SpringBootApplication
 public class BackendApplication {
 
@@ -13,5 +15,4 @@ public class BackendApplication {
 
 		SpringApplication.run(BackendApplication.class, args);
 	}
-
 }
