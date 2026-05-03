@@ -5,7 +5,7 @@ function App() {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8082/api/incidents")
+    fetch("http://localhost:8083/api/incidents")
       .then(res => res.json())
       .then(data => setIncidents(data));
   }, []);
@@ -84,7 +84,7 @@ function RCAForm({ incident }) {
   const [fix, setFix] = useState("");
 
   const submitRCA = async () => {
-    await fetch(`http://localhost:8082/api/rca/${incident.id}`, {
+    await fetch(`http://localhost:8083/api/rca/${incident.id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
